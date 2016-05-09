@@ -156,6 +156,20 @@ header {
 	width: 50%;
 }
 
+.verse-good-header {
+	font-family: 'Cinzel',serif;
+	font-size: 20px;
+	text-align: center;
+	padding: 10px;
+}
+
+.verse-bad-header {
+	font-family: 'Cinzel',serif;
+	text-align: center;
+	font-size: 20px;
+	padding: 10px;
+}
+
 @media (max-width: 700px) {
   #books {
   	width:100%;
