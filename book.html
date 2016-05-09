@@ -13,6 +13,7 @@
     	var currBookTitle = "";
     	var currChapterNum = 0;
     	var isloading = false;
+    	var currBookLength = 0;
 
 		allSentiments = {
 			"Genesis" : [[0, -0.42083, 0, 0, 0, 0, 0, 0, 0, 0.201983, 0, 0.709152, 0, 0, 0, 0.732687, 0.490722, 0, 0, 0, 0.656682, 0.634857, 0, 0, 0.681552, -0.282741, 0, 0.344109, 0, -0.292129, 0.536768]],
@@ -60,6 +61,8 @@
     		currChapterNum = 0;
     		getChapter(currBookTitle,currChapterNum+1);
     		//getBook(bookTitle);
+	    	$("#green").hide();
+			$("#red").hide();
     		$("#sentimentSlider").change(function(event,ui) {
     			currThreshhold = parseInt($("input#points").val())/100;
     			console.log("CURR THRESH " + currThreshhold);
@@ -69,34 +72,46 @@
     			absThresh = Math.abs(currThreshhold);
     			if (currThreshhold > 0) {
     				R = 51;G = 153;B = 51; 
-    				borderLeft = ""+(absThresh*20)+"px solid rgba("+R+", "+G+", "+B+", "+absThresh+")";
-    				borderRight = "0";    				
+    				//borderLeft = ""+(absThresh*20)+"px solid rgba("+R+", "+G+", "+B+", "+absThresh+")";
+    				//borderRight = "0";
+    				widthL = absThresh*20;
+    				widthR = 0;
+    				color = "rgba("+R+", "+G+", "+B+", "+absThresh+")";
+    				$("#green").show();
+    				$("#red").hide();
+    				$("#green").css({"width" : widthL, "background-color" : color});
     			} else if (currThreshhold < 0) {
     				R = 204;G = 0;B = 0;
-    				borderLeft = "0";
-    				borderRight = ""+(absThresh*20)+"px solid rgba("+R+", "+G+", "+B+", "+absThresh+")";
+    				//borderLeft = "0";
+    				//borderRight = ""+(absThresh*20)+"px solid rgba("+R+", "+G+", "+B+", "+absThresh+")";
+    				widthL = 0;
+    				$("#green").hide();
+    				$("#red").show();
+    				widthR = absThresh*20;
+    				color = "rgba("+R+", "+G+", "+B+", "+absThresh+")";
+    				$("#red").css({'width':widthR,'background-color':color});
     			} else {
-    				borderLeft = "0";
-    				borderRight = "0";
+    				$("#green").hide();
+    				$("#red").hide();
     			}
-    			$("#textTable").css('border-left',borderLeft);
-    			$("#textTable").css('border-right',borderRight);
 
 
     		});
 
     		$(".prevnextBtn").click(function() {
-    			var objDiv = $('body');
-				objDiv.scrollTop = 0;
+    			
     			id = $(this).attr('id');
 	    		if (!isloading) {
-	    			if (id == 'prevBtn') {
+	    			if (id == 'prevBtn' && currChapterNum != 0) {
 	    				currChapterNum--;
-
-	    			} else if (id == 'nextBtn') {
-	    				currChapterNum++;			
+						getChapter(currBookTitle,currChapterNum+1);
+						$("html, body").animate({ scrollTop: 0 }, "fast");
+	    			} else if (id == 'nextBtn' && currChapterNum != currBookLength-1) {
+	    				currChapterNum++;
+	    				getChapter(currBookTitle,currChapterNum+1);		
+	    				$("html, body").animate({ scrollTop: 0 }, "fast");	
 	    			}
-	    			getChapter(currBookTitle,currChapterNum+1);
+	    			
     			}
     		});
     	});
@@ -106,14 +121,18 @@
     	function getChapter(book, chapterNum) {
     		setLoading(true);
     		$('#textTitle').html(replaceAll(book,'_',' ') + " " + chapterNum);
-    		url = "http://www.sefaria.org/api/texts/" + book + "." + chapterNum + "?commentary=0";
-    		onload = function(data) {
-    			currTextArray = data.text;
-    			getSentiments(data.text,currThreshhold);
-    		};
+    		url = "http://www.sefaria.org/api/texts/" + book + "." + chapterNum;
+    		params = {
+    			commentary : 0
+    		}
     		//makeCorsRequest(onload,url);
 
-    		$.get(url,onload);
+    		$.get("https://jsonp.afeld.me/?url=" + url,params,function(data) {
+    			currTextArray = data.text;
+    			console.log(currTextArray);
+    			getSentiments(data.text,currThreshhold);
+    			currBookLength = data.length;
+    		});
     	}
 
     	function getBook(book) {
@@ -150,7 +169,13 @@
     			$('.loading').show();
 
     		} else {
-    			$(".prevnextBtn").css('background-color','#3071a9');
+    			if (currChapterNum != 0) {
+    				$("#prevBtn").css('background-color','#3071a9');
+    			}
+    			if (currChapterNum != currBookLength-1) {
+    				$("#nextBtn").css('background-color','#3071a9');
+    			}
+    			
     			$('.loading').hide();
     		}
     	}
@@ -177,7 +202,7 @@
 				};
 				(function(id, text){
 					$.get("http://gateway-a.watsonplatform.net/calls/text/TextGetTextSentiment", params, function (data) {
-							console.log(data);
+							//console.log(data);
 							if (data.docSentiment.type == "neutral") score = 0.0;
 							else score = parseFloat(data.docSentiment.score);
 
@@ -185,7 +210,7 @@
 							complete++;
 							if (complete !== textArray.length) {return;}
 							//DONE
-							console.log(sentiments);
+							//console.log(sentiments);
 							currSentiments = sentiments;
 							displayChapter(textArray,sentiments,threshold);	
 							setLoading(false);
@@ -256,7 +281,17 @@
 		<div id="textContainer">
 			<div class="prevnextBtn" id="prevBtn" >Previous Chapter</div>
 			<div class="loading">LOADING...</div>
-			<table id="textTable">
+			<table id="outerTable">
+				<tr>
+					<td id="green">
+					</td>
+					<td>
+						<table id="textTable">
+						</table>
+					</td>
+					<td id="red">
+					</td>
+				</tr>
 			</table>
 			<div class="loading">LOADING...</div>
 			<div class="prevnextBtn" id="nextBtn" >Next Chapter</div>

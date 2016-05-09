@@ -5,7 +5,13 @@ body {
 	background-color: #ffffee;
 }
 
-
+header {
+	text-align: center;
+	font-family: 'Cinzel',serif;
+	padding : 20px;
+	background-color: #3071a9;
+	color: white;
+}
 #books {
 	width: 700px;
 	margin-right: auto;
@@ -97,12 +103,24 @@ body {
 	margin-top: 10px;
 }
 
+#outerTable {
+	width: 100%;
+}
+
 #textContainer {
 	margin-top: 60px;
 	margin-bottom: 90px;
 	width: 700px;
 	margin-right: auto;
 	margin-left: auto;
+}
+
+#green {
+	border: 2px solid black;
+}
+
+#red {
+	border: 2px solid black;
 }
 
 .loading {
@@ -114,7 +132,6 @@ body {
 }
 
 .prevnextBtn {
-	width: 100%;
 	padding: 10px;
 	font-family: 'Cinzel', serif;
 	font-size: 15px;
