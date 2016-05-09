@@ -1,0 +1,272 @@
+<html>
+	<head>
+    	<link rel="stylesheet" href="style.css">
+    	<link rel="stylesheet" href="range.css">
+    	<!--<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">-->
+    	<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+		<!--<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>-->
+    	<script>
+
+    	var currTextArray = [];
+    	var currThreshhold = 0;
+    	var currSentiments = [];
+    	var currBookTitle = "";
+    	var currChapterNum = 0;
+    	var isloading = false;
+
+		allSentiments = {
+			"Genesis" : [[0, -0.42083, 0, 0, 0, 0, 0, 0, 0, 0.201983, 0, 0.709152, 0, 0, 0, 0.732687, 0.490722, 0, 0, 0, 0.656682, 0.634857, 0, 0, 0.681552, -0.282741, 0, 0.344109, 0, -0.292129, 0.536768]],
+			"Exodus" : [[0, 0, 0.719265, 0, 0, 0, 0.323098, 0, 0, -0.490428, -0.481137, -0.355332, 0, 0, 0, 0.204727, 0.400347, 0.23194, 0.603388, 0, 0, 0.253267]],
+			"Leviticus" : [[-0.241556, 0.372613, 0, 0, -0.392694, 0, 0, 0, 0.872291, 0, -0.280187, 0, 0.939142, 0, -0.413595, 0, 0.932416]],
+			"Numbers" : [[-0.361261, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.273836, 0, -0.292782, 0, 0, 0, 0, 0, 0, -0.234426, 0, -0.280551, 0, -0.242858, 0, -0.296735, 0, -0.205888, 0, -0.239511, 0, -0.285609, 0, 0, 0, -0.352119, 0, -0.317009, 0, -0.272315, 0, -0.25721, -0.245451, 0, 0, 0, 0.652804, 0, 0.243786, 0, 0]],
+			"Deuteronomy" : [[0, 0, 0, 0, -0.391477, 0.325417, 0, 0.493058, -0.333376, 0.517126, 0.248567, -0.825648, 0.755294, 0.608105, 0, -0.26828, 0.341223, 0, 0, 0, 0, 0.72541, 0.676163, 0, 0.268086, 0, -0.663311, 0.20158, -0.280837, 0.207699, 0, 0, 0.744824, -0.509645, -0.698891, 0, -0.290767, 0, 0.260684, 0.220238, 0, -0.676591, -0.445078, -0.270084, 0, 0.369254]],
+			"Joshua" : [[0, -0.236002, 0, 0.292916, 0, 0, 0.521834, 0.838459, -0.0567361, -0.367396, 0.574139, -0.217894, 0, 0.556539, 0, 0.284813, 0.292568, 0.611972]],
+			"Judges" : [[-0.523201, 0.215666, 0, -0.245642, -0.22186, 0.24756, 0, 0, -0.278453, 0, 0, 0, 0, 0, 0, 0, -0.395818, 0, 0, 0, 0, 0, 0, 0.637492, 0, 0, -0.249561, -0.371532, 0, 0, -0.770167, -0.344316, 0, -0.538074, 0, 0]],
+			"I_Samuel" : [[0, 0, 0, 0, 0, -0.622682, -0.486386, -0.432392, 0, -0.790465, 0, 0, -0.344029, -0.303568, -0.480406, -0.734054, 0, -0.621661, 0, 0, 0, 0, -0.510165, 0.265428, 0, 0, 0, 0]],
+			"II_Samuel" : [[-0.272371, 0, 0, -0.325312, 0, 0, -0.233423, 0, -0.418705, 0, 0, -0.53161, 0, -0.284988, 0, 0, 0, 0.340454, -0.702861, -0.299174, -0.481007, -0.311142, 0.329811, 0, -0.462882, 0.833091, -0.70323]],
+			"I_Kings" : [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.259829, 0, 0, 0.341764, 0, -0.251804, 0, 0, 0, 0, 0, 0, -0.586073, 0, 0, 0, 0, 0, 0, 0, -0.217862, 0, 0, 0, 0, 0, 0.324609, 0, 0, 0.812169, -0.20917, 0.802402, 0, 0, -0.0614376, 0, -0.254062, 0, -0.53578, -0.241502, 0, 0, 0]],
+			"II_Kings" : [[-0.352004, -0.451987, 0, 0, 0.273556, -0.325, 0.310578, 0, 0, -0.246182, 0, -0.223645, 0, 0, 0, -0.340007, 0, -0.449613]],
+			"Isaiah" : [[0, -0.380649, 0, -0.655099, -0.706149, -0.928108, -0.526981, 0, -0.685533, -0.42787, -0.532736, -0.565386, -0.326507, -0.716941, -0.55576, -0.703889, -0.46478, 0.268714, 0.888536, 0, 0.231547, -0.624781, -0.433927, -0.776591, -0.206493, 0.735169, 0.836666, -0.567589, 0, 0, 0.27801]],
+			"Jeremiah" : [[0, 0, -0.271767, 0, 0, 0, 0, 0.406665, 0.338907, -0.521362, 0, 0.458442, -0.290501, -0.469022, 0, 0, -0.674443, -0.202799, 0.335282]],
+			"Ezekiel" : [[0, 0, 0, 0.915096, 0, 0, 0.376959, 0, 0, -0.250917, -0.22474, 0, 0, -0.267873, 0, 0, 0, -0.589251, -0.593278, 0, -0.250296, -0.77807, 0, -0.747398, -0.314785, 0, 0, 0.00374493]],
+			"Hosea" : [[0, 0, -0.298915, -0.449821, -0.282639, -0.0101593, -0.339437, -0.493278, 0]],
+			"Joel" : [[0, 0, 0, 0, -0.249975, 0, -0.345099, 0, 0, -0.717954, -0.274738, -0.643073, 0, -0.330034, -0.212355, 0.714703, -0.815675, -0.474975, 0.322676, 0]],
+			"Amos" : [[-0.282151, 0, 0, 0.525982, 0, -0.546901, 0, 0, 0, 0.519382, -0.712648, 0.502103, -0.488481, -0.672373, 0]],
+			"Obadiah" : [[-0.254043, 0.271728, 0.355884, 0, -0.546008, -0.40222, -0.332726, -0.432294, -0.596706, 0, -0.527904, -0.536442, -0.756648, -0.514014, 0, -0.44551, 0.538419, 0.243258, 0, 0, 0]],
+			"Jonah" : [[0, 0, 0, -0.697721, -0.418805, 0, -0.353024, 0, 0, -0.261046, -0.399067, 0.567846, -0.566486, 0.432761, -0.765542, 0]],
+			"Micah" : [[0, 0.297668, 0.817074, -0.730845, -0.375559, 0.363979, 0, -0.719112, -0.40392, 0, -0.364332, -0.216526, -0.298863, 0.415635, 0.607325, -0.235196]],
+			"Nahum" : [[-0.678382, -0.609471, 0, 0, -0.219504, -0.515796, 0, -0.417358, -0.302119, -0.688064, -0.361098, -0.639218, -0.819684, -0.727284]],
+			"Habakkuk" : [[-0.514496, -0.758788, -0.713847, -0.795855, 0.509612, -0.278122, -0.753966, -0.392875, 0, -0.474455, -0.594547, 0, -0.325769, -0.48406, 0.41229, 0, -0.656815]],
+			"Zephaniah" : [[0, 0.303038, -0.367837, 0, 0, 0, 0.851682, 0, -0.408306, -0.645354, -0.707699, -0.663933, 0, 0.815889, -0.857504, -0.633059, -0.714066, -0.664189]],
+			"Haggai" : [[-0.307897, 0, -0.245338, -0.618033, 0.213503, -0.49474, 0.224857, 0.571757, -0.488503, -0.247741, 0, -0.39371, 0, 0, -0.287095]],
+			"Zechariah" : [[-0.266102, -0.658428, 0, -0.34991, -0.56523, 0.691378, 0, 0, 0.503651, 0, 0, -0.509137, 0.852745, 0.558143, -0.71722, -0.23264, 0.586914]],
+			"Malachi" : [[-0.616317, 0.522722, -0.630876, 0, 0.565045, -0.124492, -0.618596, -0.196941, 0.805295, -0.456911, 0.63668, -0.75205, -0.516337, 0]],
+			"Psalms" : [[-0.672196, 0.717208, 0.289157, -0.270972, -0.500469, -0.664843]],
+			"Proverbs" : [[0, 0.67787, 0.784713, 0.837819, 0.918299, 0, -0.816007, 0, 0.205124, -0.221339, -0.45421, -0.811915, -0.71811, 0, -0.381718, -0.693267, -0.593722, -0.587136, -0.294799, 0.223784, -0.365051, -0.719862, 0.519129, -0.789707, -0.331152, -0.302731, -0.677082, -0.339474, -0.573887, -0.757784, 0.327915, -0.790956, 0]],
+			"Job" : [[-0.387264, 0, 0.661405, 0.536762, 0, 0, 0, 0, -0.682633, 0.252844, -0.356492, 0, 0, 0, 0, -0.415545, 0, 0, 0, -0.267993, 0.202472, -0.561008]],
+			"Song_of_Songs" : [[0, 0.78788, 0.317374, 0.883285, 0, 0, -0.334477, 0, 0.438642, 0, 0, 0, 0.608631, 0.327705, 0.883023, 0.852893, 0.271919]],
+			"Ruth" : [[-0.227816, 0, 0, 0, -0.397494, 0, 0, 0, -0.419118, 0.330983, -0.44895, 0, -0.407098, 0, 0, 0.408325, -0.250495, 0, -0.22729, -0.266295, -0.589094, 0]],
+			"Lamentations" : [[-0.0626733, -0.69574, 0, -0.822393, -0.719301, -0.266894, -0.879078, -0.556194, -0.54314, -0.249978, -0.80591, -0.855805, -0.863023, -0.739676, -0.237787, -0.613177, -0.388225, -0.680284, -0.249607, -0.630842, -0.464988, -0.906061]],
+			"Ecclesiastes" : [[0, -0.822713, -0.203912, 0.808181, -0.25524, 0, -0.346905, -0.779462, 0, 0, -0.25694, -0.282415, 0, -0.663479, 0, 0.926644, -0.427954, 0]],
+			"Esther" : [[0, 0, 0, 0.855448, 0.510324, 0.507991, 0.758352, 0.637088, 0, 0, 0.583703, -0.33719, 0.461966, -0.306868, 0, 0, 0, 0.318632, 0, 0.783639, 0.743548, 0]],
+			"Daniel" : [[-0.214471, 0, -0.218496, 0.815823, 0, 0, 0, 0, 0.268155, -0.690391, 0, 0.559592, 0, -0.216373, -0.395397, 0.322817, 0.834898, 0, 0, 0.838757, 0]],
+			"Ezra" : [[0.568215, 0, 0, 0, 0, 0.621921, 0, 0, 0, -0.291716, 0]],
+			"Nehemiah" : [[0, 0, -0.477531, -0.519906, 0.694405, -0.719113, 0, 0, 0, 0.771239, 0.610136]],
+			"II_Chronicles" : [[0, -0.268008, 0, 0, 0, 0, 0.202803, 0.534901, 0, 0.757682, 0.416395, 0, 0, 0, 0.424065, 0, 0, 0.410353]]
+		};
+    	$(function() {
+    		url = $(location).attr('href');
+    		currBookTitle = url.substring(url.indexOf('=')+1,url.length);
+    		currChapterNum = 0;
+    		getChapter(currBookTitle,currChapterNum+1);
+    		//getBook(bookTitle);
+    		$("#sentimentSlider").change(function(event,ui) {
+    			currThreshhold = parseInt($("input#points").val())/100;
+    			console.log("CURR THRESH " + currThreshhold);
+    			//getSentiments(currTextArray,currThreshhold);
+    			displayChapter(currTextArray,currSentiments,currThreshhold);
+
+    			absThresh = Math.abs(currThreshhold);
+    			if (currThreshhold > 0) {
+    				R = 51;G = 153;B = 51; 
+    				borderLeft = ""+(absThresh*20)+"px solid rgba("+R+", "+G+", "+B+", "+absThresh+")";
+    				borderRight = "0";    				
+    			} else if (currThreshhold < 0) {
+    				R = 204;G = 0;B = 0;
+    				borderLeft = "0";
+    				borderRight = ""+(absThresh*20)+"px solid rgba("+R+", "+G+", "+B+", "+absThresh+")";
+    			} else {
+    				borderLeft = "0";
+    				borderRight = "0";
+    			}
+    			$("#textTable").css('border-left',borderLeft);
+    			$("#textTable").css('border-right',borderRight);
+
+
+    		});
+
+    		$(".prevnextBtn").click(function() {
+    			var objDiv = $('body');
+				objDiv.scrollTop = 0;
+    			id = $(this).attr('id');
+	    		if (!isloading) {
+	    			if (id == 'prevBtn') {
+	    				currChapterNum--;
+
+	    			} else if (id == 'nextBtn') {
+	    				currChapterNum++;			
+	    			}
+	    			getChapter(currBookTitle,currChapterNum+1);
+    			}
+    		});
+    	});
+
+
+
+    	function getChapter(book, chapterNum) {
+    		setLoading(true);
+    		$('#textTitle').html(replaceAll(book,'_',' ') + " " + chapterNum);
+    		url = "http://www.sefaria.org/api/texts/" + book + "." + chapterNum + "?commentary=0";
+    		onload = function(data) {
+    			currTextArray = data.text;
+    			getSentiments(data.text,currThreshhold);
+    		};
+    		//makeCorsRequest(onload,url);
+
+    		$.get(url,onload);
+    	}
+
+    	function getBook(book) {
+    		$('#textTitle').html(replaceAll(book,'_',' '));
+
+    		params = {
+    			commentary : 0
+    		}
+    		$.get("https://jsonp.afeld.me/?url=http://www.sefaria.org/api/texts/" + book,params,
+    		function(data) {
+    			currTextArray = data.text;
+    			console.log(data.text);
+    			getSentiments(data.text,currThreshhold);
+    		});
+    	}
+
+    	function displayChapter(textArray,sentiments,threshold) {
+    		$("#textTable").empty();
+    		appendString = "";
+    		for (var i = 0; i < textArray.length; i++) {
+    			sentiment = sentiments[i];
+    			goodText = "";
+    			badText = "";
+    			if (sentiment >= threshold) goodText = textArray[i];
+    			else badText = textArray[i];
+    			appendString += "<tr><td class='verse-good'>" + goodText + "</td><td class='verse-bad'>" + badText + "</td></tr>";
+    		}
+    		$("#textTable").append(appendString);
+    	}
+    	function setLoading(isload) {
+    		isloading = isload;
+    		if (isload) {
+    			$(".prevnextBtn").css('background-color','#666');
+    			$('.loading').show();
+
+    		} else {
+    			$(".prevnextBtn").css('background-color','#3071a9');
+    			$('.loading').hide();
+    		}
+    	}
+    	function getSentiments(textArray,threshold) {
+    		key = "4a8886064c32ae396a53c74288e50850949f9191";
+    		//key = "e0debb1cf52c19eb455cd728713f0bc35329c0df";
+    		//key = "266a9c809a5c87885f72f0fed1579b964ffe216c";
+    		//key = "50b0acb6394561618c152498da26f1c0d289e800";
+
+    		//CACHE
+    		sentiments = []; //allSentiments[currBookTitle][currChapterNum];
+
+    		var complete = 0;
+    		/*currSentiments = sentiments;
+    		console.log(sentiments);
+    		displayChapter(textArray,sentiments,threshold);	*/
+    		$(textArray).each(function(id,text){
+    			
+				params = {
+					"apikey" : key,
+					"text" : text,
+					"outputMode" : "json",
+					"showSourceText" : 0
+				};
+				(function(id, text){
+					$.get("http://gateway-a.watsonplatform.net/calls/text/TextGetTextSentiment", params, function (data) {
+							console.log(data);
+							if (data.docSentiment.type == "neutral") score = 0.0;
+							else score = parseFloat(data.docSentiment.score);
+
+							sentiments[id] = score;
+							complete++;
+							if (complete !== textArray.length) {return;}
+							//DONE
+							console.log(sentiments);
+							currSentiments = sentiments;
+							displayChapter(textArray,sentiments,threshold);	
+							setLoading(false);
+					});    			
+
+				})(id, text);
+    		});
+
+    	}
+    	function replaceAll(str, find, replace) {
+			return str.replace(new RegExp(find, 'g'), replace);
+		}
+
+
+		// Create the XHR object.
+		function createCORSRequest(method, url) {
+		  var xhr = new XMLHttpRequest();
+		  if ("withCredentials" in xhr) {
+		    // XHR for Chrome/Firefox/Opera/Safari.
+		    xhr.open(method, url, true);
+		  } else if (typeof XDomainRequest != "undefined") {
+		    // XDomainRequest for IE.
+		    xhr = new XDomainRequest();
+		    xhr.open(method, url);
+		  } else {
+		    // CORS not supported.
+		    xhr = null;
+		  }
+		  return xhr;
+		}
+
+		// Helper method to parse the title tag from the response.
+		function getTitle(text) {
+		  return text.match('<title>(.*)?</title>')[1];
+		}
+
+		// Make the actual CORS request.
+		function makeCorsRequest(method,url) {
+		  // All HTML5 Rocks properties support CORS.
+
+		  var xhr = createCORSRequest('GET', url);
+		  if (!xhr) {
+		    alert('CORS not supported');
+		    return;
+		  }
+
+		  // Response handlers.
+		  xhr.onload = method;
+
+		  xhr.onerror = function() {
+		    alert('API ERROR');
+		  };
+
+		  xhr.send();
+		}
+    	</script>
+	</head>
+	<body>
+		<div id="header">
+			<div>
+			<h1 id="textTitle"/>
+			</div>
+
+  			<div id="back">
+  				<a href="index.html">&#x2190; Home</a>
+  			</div>
+		</div>
+		<div id="textContainer">
+			<div class="prevnextBtn" id="prevBtn" >Previous Chapter</div>
+			<div class="loading">LOADING...</div>
+			<table id="textTable">
+			</table>
+			<div class="loading">LOADING...</div>
+			<div class="prevnextBtn" id="nextBtn" >Next Chapter</div>
+		</div>
+
+		<div id="footer">
+			<div id="sentimentSlider">
+  				<h3 id="sentimentLabel">Sentiment-o-Meter</h3>
+  				<input type="range" name="points" id="points" value="0" min="-100" max="100" >
+  			</div>
+		</div>
+	</body>
+</html>

@@ -1,8 +1,53 @@
 <html>
 	<head>
+    	<script src="http://code.jquery.com/jquery-latest.js"></script>
+    	<link rel="stylesheet" href="style.css">
+		<script>
+		$(function() {
+			generateBooksTable();
+		});
 
+		/*
+		EVENT HANDLERS
+		*/
+
+
+
+		function generateBooksTable() {
+			partsArray = ['Torah','Prophets','Writings'];
+			booksArray = [['Genesis','Exodus','Leviticus','Numbers','Deuteronomy'],
+						  ['Joshua','Judges','I Samuel','II Samuel','I Kings','II Kings','Isaiah','Jeremiah','Ezekiel','Hosea','Joel','Amos','Obadiah','Jonah','Micah','Nahum','Habakkuk','Zephaniah','Haggai','Zechariah','Malachi'],
+						  ['Psalms','Proverbs','Job','Song of Songs','Ruth','Lamentations','Ecclesiastes','Esther','Daniel','Ezra','Nehemiah','I Chronicles','II Chronicles']];
+			booksTable = $('#booksTable');
+			for (var i = 0; i < partsArray.length; i++) {
+				appendString = "";
+				appendString += "<tr><td colspan=3 class='book-part'>" + partsArray[i] + "</td></tr>";
+
+				for (var j = 0; j < booksArray[i].length; j++) {
+					if (j % 3 == 0) appendString += "<tr>";
+					appendString += "<td class='book-book'><a href='book.html?b=" + replaceAll(booksArray[i][j]," ","_") + "'>" + booksArray[i][j] + "</a></td>";
+					if ((j+1) % 3 == 0) appendString += "</tr>";
+				}
+				numemptybooks = 3 - (booksArray[i].length % 3);
+				if (numemptybooks == 3) numemptybooks = 0;
+				for (var j = 0; j < numemptybooks; j++) {
+					appendString += "<td class='book-emptybook'></td>";
+				}
+				if (booksArray[i].length % 3 != 0) appendString += "</tr>";
+				console.log(appendString);
+				$(appendString).appendTo(booksTable);
+			}
+
+		}
+		function replaceAll(str, find, replace) {
+			return str.replace(new RegExp(find, 'g'), replace);
+		}
+		</script>
 	</head>
 	<body>
-woohoo	final project!
+		<div id="books">
+			<table id="booksTable">
+			</table>
+		</div>
 	</body>
 </html>

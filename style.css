@@ -1,0 +1,157 @@
+@import url(https://fonts.googleapis.com/css?family=Cinzel);
+
+body {
+	margin: 0;
+	background-color: #ffffee;
+}
+
+
+#books {
+	width: 700px;
+	margin-right: auto;
+	margin-left: auto;
+}
+
+#booksTable {
+	width: 100%;
+}
+
+
+
+.book-part {
+	text-align: center;
+	color: grey;
+	padding: 20px;
+	font-family: 'Cinzel', serif;
+	font-size: 30px;
+}
+
+.book-book {
+	text-align: center;
+	background-color: #DDD;
+	font-family: 'Cinzel', serif;
+}
+
+.book-emptybook {
+	padding:20px;
+}
+
+.book-book:hover {
+	background-color: #000;
+}
+.book-book a {
+	text-decoration: none;
+	color: black;
+	display:block;
+	padding: 20px;
+}
+
+.book-book:hover a {
+	color: white;
+}
+/* BOOK PAGE */
+#header {
+	position: fixed;
+	width: 100%;
+	top: 0;
+	background: #DDD;
+	border-bottom: solid 2px #000;
+}
+
+#sentimentSlider {
+	width: 700px;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+}
+
+#textTitle {
+	text-align: center;
+	font-size: 20px;
+	font-family: 'Cinzel', serif;
+}
+#footer {
+	font-family: 'Cinzel', serif;
+	position: fixed;
+	width: 100%;
+	bottom: 0;
+	background: #DDD;
+	border-top: solid 2px #000;
+}
+#back {
+	position: absolute;
+	left: 10px;
+	top:0px;
+	bottom:0px;
+	margin-top: auto;
+	margin-bottom: auto;
+	height: 30px;
+}
+#back a {
+	text-decoration: none;
+	color:black;
+}
+
+#sentimentLabel {
+	margin: 0px;
+	margin-top: 10px;
+}
+
+#textContainer {
+	margin-top: 60px;
+	margin-bottom: 90px;
+	width: 700px;
+	margin-right: auto;
+	margin-left: auto;
+}
+
+.loading {
+	width: 100%;
+	font-family: 'Cinzel', serif;
+	font-size: 20px;
+	text-align: center;
+	margin: 20px;
+}
+
+.prevnextBtn {
+	width: 100%;
+	padding: 10px;
+	font-family: 'Cinzel', serif;
+	font-size: 15px;
+	text-align: center;
+	background-color: #3071a9;
+	color: white;
+	cursor: pointer;
+	border: solid 2px #000;
+}
+
+.prevnextBtn:hover {
+	background-color: black;
+}
+
+.verse-good {
+	padding: 10px;
+	width: 50%;
+}
+
+.verse-bad {
+	padding: 10px;
+	width: 50%;
+}
+
+@media (max-width: 700px) {
+  #books {
+  	width:100%;
+  }
+  .book-book a {
+  	padding: 10px 5px 10px 5px;
+  }
+  #sentimentSlider {
+  	width: 90%;
+  	margin-left: 20px;
+  	margin-right: 0px;
+  }
+  #textContainer {
+  	width: 100%;
+  }
+}
